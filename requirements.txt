@@ -1,0 +1,12 @@
+mediapipe==0.10.33
+opencv-python-headless==4.13.0.92
+torch==2.11.0
+torchvision==0.26.0
+numpy==2.4.4
+fastapi==0.135.3
+uvicorn
+python-multipart==0.0.26
+websockets==16.0
+gtts==2.5.4
+pydub==0.25.1
+scikit-learn==1.8.0
