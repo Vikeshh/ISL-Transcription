@@ -15,7 +15,7 @@ X_test = torch.FloatTensor(np.load(os.path.join(BASE, 'data/X_test.npy')))
 y_test = np.load(os.path.join(BASE, 'data/y_test.npy'))
 
 model = ISLModel(num_classes=len(SIGNS))
-model.load_state_dict(torch.load('isl_model.pt', map_location='cpu'))
+model.load_state_dict(torch.load('../isl_model.pt', map_location='cpu'))
 model.eval()
 
 with torch.no_grad():
