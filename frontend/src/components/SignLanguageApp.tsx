@@ -55,9 +55,10 @@ const SignLanguageApp = () => {
   useEffect(() => {
     const connect = () => {
     const wsUrl = process.env.NODE_ENV === 'production'
-    ? 'wss://isl-transcription-production.up.railway.app/ws'
+    ? 'wss://isl-speech.up.railway.app/ws'
     : 'ws://localhost:8000/ws'
-    const ws = new WebSocket(wsUrl)      ws.binaryType = "arraybuffer";
+    const ws = new WebSocket(wsUrl);
+    ws.binaryType = "arraybuffer";
       wsRef.current = ws;
 
       ws.onopen = () => setConnected(true);
