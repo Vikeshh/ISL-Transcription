@@ -16,9 +16,8 @@ from model.architecture import ISLModel
 SIGNS = ['hello', 'yes', 'no', 'help', 'thanks', 'good']
 
 model = ISLModel(num_classes=len(SIGNS))
-model.load_state_dict(
-    torch.load(os.path.join(BASE, 'model/isl_model.pt'), map_location='cpu')
-)
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+model.load_state_dict(torch.load(os.path.join(BASE, 'isl_model.pt'), map_location='cpu'))
 model.eval()
 
 def predict(sequence: np.ndarray):

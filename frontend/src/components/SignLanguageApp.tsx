@@ -54,10 +54,11 @@ const SignLanguageApp = () => {
   // WebSocket connection
   useEffect(() => {
     const connect = () => {
-    const wsUrl = process.env.NODE_ENV === 'production'
-    ? 'wss://isl-speech.up.railway.app/ws'
-    : 'ws://localhost:8000/ws'
-    const ws = new WebSocket(wsUrl);
+//     const wsUrl = process.env.NODE_ENV === 'production'
+//     ? 'wss://isl-speech.up.railway.app/ws'
+//     : 'ws://localhost:8000/ws'
+    const wsUrl = 'ws://localhost:8000/ws';
+    const ws = new WebSocket(wsUrl)  ;
     ws.binaryType = "arraybuffer";
       wsRef.current = ws;
 
@@ -72,7 +73,7 @@ const SignLanguageApp = () => {
         if (waitingForAudio.current) {
           // Audio bytes
           waitingForAudio.current = false;
-          const blob = new Blob([event.data], { type: "audio/wav" });
+        const blob = new Blob([event.data], { type: "audio/mpeg" });
           const url = URL.createObjectURL(blob);
           const audio = new Audio(url);
           audio.play().finally(() => URL.revokeObjectURL(url));
@@ -82,7 +83,7 @@ const SignLanguageApp = () => {
         try {
           const data = JSON.parse(event.data);
           setCurrentWord(data.word || "—");
-          setConfidence(Math.round((data.confidence || 0) * 100));
+          setConfidence(Math.round(data.confidence || 0));
           if (data.word && data.word !== "—") {
             addToHistory(data.word, data.confidence);
           }

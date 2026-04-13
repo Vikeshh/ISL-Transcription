@@ -70,8 +70,8 @@ for epoch in range(EPOCHS):
 
     if acc > best_acc:
         best_acc = acc
-        torch.save(model.state_dict(), 'isl_model.pt')
-
+        BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        torch.save(model.state_dict(), os.path.join(BASE, 'isl_model.pt'))
     if (epoch + 1) % 10 == 0:
         print(f"Epoch {epoch+1}/{EPOCHS} — Loss: {total_loss/len(train_dl):.4f} — Acc: {acc:.1f}%")
 
