@@ -21,6 +21,7 @@ const SignLanguageApp = () => {
   const [confidence, setConfidence] = useState(0);
   const [history, setHistory] = useState<Prediction[]>([]);
   const [cameraReady, setCameraReady] = useState(false);
+  const [isInterpreting, setIsInterpreting] = useState(false);
 
   const addToHistory = useCallback((word: string, conf: number) => {
     setHistory((prev) => [
@@ -54,14 +55,11 @@ const SignLanguageApp = () => {
   // WebSocket connection
   useEffect(() => {
     const connect = () => {
-// const wsUrl = process.env.NODE_ENV === 'production'
-//   ? 'wss://trimmer-scallop-denial.ngrok-free.dev/ws'
-//   : 'ws://localhost:8000/ws';
-    const wsUrl = process.env.NODE_ENV === 'production'
-    ? 'wss://vik30jmd-isl-speech.hf.space/ws'
-    : 'ws://localhost:8000/ws';
-      const ws = new WebSocket(wsUrl)  ;
-    ws.binaryType = "arraybuffer";
+      const wsUrl = process.env.NODE_ENV === 'production'
+        ? 'wss://vik30jmd-isl-speech.hf.space/ws'
+        : 'ws://localhost:8000/ws';
+      const ws = new WebSocket(wsUrl);
+      ws.binaryType = "arraybuffer";
       wsRef.current = ws;
 
       ws.onopen = () => setConnected(true);
@@ -73,9 +71,8 @@ const SignLanguageApp = () => {
 
       ws.onmessage = (event) => {
         if (waitingForAudio.current) {
-          // Audio bytes
           waitingForAudio.current = false;
-        const blob = new Blob([event.data], { type: "audio/mpeg" });
+          const blob = new Blob([event.data], { type: "audio/mpeg" });
           const url = URL.createObjectURL(blob);
           const audio = new Audio(url);
           audio.play().finally(() => URL.revokeObjectURL(url));
@@ -106,12 +103,17 @@ const SignLanguageApp = () => {
 
   // Frame capture loop
   useEffect(() => {
-    if (!cameraReady) return;
+    if (!cameraReady || !isInterpreting) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
 
     const canvas = canvasRef.current;
     const video = videoRef.current;
     if (!canvas || !video) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -134,7 +136,7 @@ const SignLanguageApp = () => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [cameraReady]);
+  }, [cameraReady, isInterpreting]);
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -185,6 +187,29 @@ const SignLanguageApp = () => {
                 <span>{confidence}%</span>
               </div>
               <Progress value={confidence} className="h-2" />
+            </div>
+
+            {/* Start / Stop button */}
+            <div className="flex justify-center gap-4 mt-6">
+              {!isInterpreting ? (
+                <button
+                  onClick={() => {
+                    setCurrentWord("—");
+                    setConfidence(0);
+                    setIsInterpreting(true);
+                  }}
+                  className="px-6 py-3 rounded-xl bg-green-600 text-white font-semibold text-lg hover:bg-green-700 transition"
+                >
+                  Start
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsInterpreting(false)}
+                  className="px-6 py-3 rounded-xl bg-red-600 text-white font-semibold text-lg hover:bg-red-700 transition"
+                >
+                  Stop
+                </button>
+              )}
             </div>
           </div>
         </div>
