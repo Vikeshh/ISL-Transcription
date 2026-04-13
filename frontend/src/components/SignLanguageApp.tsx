@@ -54,9 +54,12 @@ const SignLanguageApp = () => {
   // WebSocket connection
   useEffect(() => {
     const connect = () => {
-const wsUrl = process.env.NODE_ENV === 'production'
-  ? 'wss://trimmer-scallop-denial.ngrok-free.dev/ws'
-  : 'ws://localhost:8000/ws';
+// const wsUrl = process.env.NODE_ENV === 'production'
+//   ? 'wss://trimmer-scallop-denial.ngrok-free.dev/ws'
+//   : 'ws://localhost:8000/ws';
+    const wsUrl = process.env.NODE_ENV === 'production'
+    ? 'wss://vik30jmd-isl-speech.hf.space/ws'
+    : 'ws://localhost:8000/ws';
       const ws = new WebSocket(wsUrl)  ;
     ws.binaryType = "arraybuffer";
       wsRef.current = ws;
